@@ -242,11 +242,25 @@
   /* ---------- instagram ---------- */
   .insta{background:var(--bg-2);}
   .insta .head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
-  .insta .handle{font-size:12px;color:var(--green);font-weight:600;letter-spacing:.02em;}
-  .ig-fallback{display:flex;flex-direction:column;gap:13px;margin-top:18px;}
+  .insta .handle{font-size:12px;color:var(--green);font-weight:600;letter-spacing:.02em;text-decoration:none;}
+  /* horizontal slider */
+  .slider-wrap{margin:18px -22px 0;}
+  .ig-track{
+    display:flex;gap:13px;overflow-x:auto;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;padding:2px 22px 6px;
+    scrollbar-width:none;-ms-overflow-style:none;
+  }
+  .ig-track::-webkit-scrollbar{display:none;}
+  .ig-slide{flex:0 0 80%;max-width:310px;scroll-snap-align:start;display:flex;}
+  .ig-slide > *{width:100%;}
+  .ig-slide.embed{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;min-height:200px;align-items:flex-start;
+  }
+  .ig-slide.embed .instagram-media{margin:0!important;width:100%!important;min-width:0!important;border:none!important;box-shadow:none!important;}
   .ig-card{
     border-radius:16px;overflow:hidden;color:#fff;position:relative;text-decoration:none;
-    padding:22px 20px 16px;min-height:172px;display:flex;flex-direction:column;justify-content:space-between;
+    padding:22px 20px 16px;min-height:200px;display:flex;flex-direction:column;justify-content:space-between;
     box-shadow:0 18px 40px -24px rgba(47,51,32,.55);
   }
   .ig-card:active{transform:scale(.99);}
@@ -258,8 +272,19 @@
   .ig-card.t{background:linear-gradient(150deg,#c87760,#a4503f);}
   .ig-card.g{background:linear-gradient(150deg,#5d6a3b,#3e4626);}
   .ig-card.o{background:linear-gradient(150deg,#cda25c,#a87b34);}
-  #ig-embeds{margin-top:18px;display:flex;flex-direction:column;gap:14px;}
-  #ig-embeds .instagram-media{margin:0 auto !important;min-width:unset !important;}
+  .ig-controls{display:flex;align-items:center;gap:14px;margin-top:14px;}
+  .ig-dots{display:flex;gap:7px;justify-content:center;align-items:center;flex:1;flex-wrap:wrap;}
+  .ig-dots b{width:7px;height:7px;border-radius:50%;background:var(--line);transition:width .25s,background .25s;cursor:pointer;}
+  .ig-dots b.on{background:var(--green);width:22px;border-radius:5px;}
+  .ig-arrow{
+    width:40px;height:40px;flex-shrink:0;border-radius:50%;
+    border:1px solid var(--line);background:var(--card);color:var(--green);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:transform .15s ease,opacity .2s ease;
+  }
+  .ig-arrow:active{transform:scale(.92);}
+  .ig-arrow:disabled{opacity:.34;cursor:default;}
+  .ig-arrow svg{width:18px;height:18px;}
 
   /* ---------- final cta ---------- */
   .final{
@@ -448,32 +473,44 @@
         <div class="eyebrow">No Instagram</div>
         <h2>Reflexões para o seu dia a dia</h2>
       </div>
-      <span class="handle">@emanamor__</span>
+      <a class="handle" href="https://instagram.com/emanamor__" target="_blank" rel="noopener">@emanamor__</a>
     </div>
 
-    <!-- Embeds reais aparecem aqui quando você preencher IG_POSTS no final do arquivo -->
-    <div id="ig-embeds"></div>
-
-    <!-- Fallback elegante (sempre bonito, mesmo sem links) -->
-    <div class="ig-fallback" id="ig-fallback">
-      <a class="ig-card t" href="https://instagram.com/emanamor__" target="_blank" rel="noopener">
-        <div class="lacan">Real · Simbólico · Imaginário</div>
-        <p class="q">O sujeito não é aquilo que aparenta ser — mas aquilo que insiste em se repetir.</p>
-        <div class="meta"><span class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg> @emanamor__</span><span>ver post</span></div>
-      </a>
-      <a class="ig-card g" href="https://instagram.com/emanamor__" target="_blank" rel="noopener">
-        <div class="lacan">Escuta · Cuidado</div>
-        <p class="q">Onde o sofrimento encontra palavra, a travessia se torna possível.</p>
-        <div class="meta"><span class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg> @emanamor__</span><span>ver post</span></div>
-      </a>
-      <a class="ig-card o" href="https://instagram.com/emanamor__" target="_blank" rel="noopener">
-        <div class="lacan">Processo</div>
-        <p class="q">Psicanálise é tempo, responsabilidade e elaboração.</p>
-        <div class="meta"><span class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg> @emanamor__</span><span>ver post</span></div>
-      </a>
+    <!-- Slider horizontal. Os cards viram EMBEDS REAIS automaticamente
+         assim que você preencher IG_POSTS no final do arquivo. -->
+    <div class="slider-wrap">
+      <div class="ig-track" id="igTrack">
+        <div class="ig-slide">
+          <a class="ig-card t" href="https://instagram.com/emanamor__" target="_blank" rel="noopener">
+            <div class="lacan">Real · Simbólico · Imaginário</div>
+            <p class="q">O sujeito não é aquilo que aparenta ser — mas aquilo que insiste em se repetir.</p>
+            <div class="meta"><span class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg> @emanamor__</span><span>ver post</span></div>
+          </a>
+        </div>
+        <div class="ig-slide">
+          <a class="ig-card g" href="https://instagram.com/emanamor__" target="_blank" rel="noopener">
+            <div class="lacan">Escuta · Cuidado</div>
+            <p class="q">Onde o sofrimento encontra palavra, a travessia se torna possível.</p>
+            <div class="meta"><span class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg> @emanamor__</span><span>ver post</span></div>
+          </a>
+        </div>
+        <div class="ig-slide">
+          <a class="ig-card o" href="https://instagram.com/emanamor__" target="_blank" rel="noopener">
+            <div class="lacan">Processo</div>
+            <p class="q">Psicanálise é tempo, responsabilidade e elaboração.</p>
+            <div class="meta"><span class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg> @emanamor__</span><span>ver post</span></div>
+          </a>
+        </div>
+      </div>
     </div>
 
-    <a class="btn btn-ghost btn-block" href="https://instagram.com/emanamor__" target="_blank" rel="noopener">Seguir no Instagram</a>
+    <div class="ig-controls">
+      <button class="ig-arrow" id="igPrev" type="button" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="ig-dots" id="igDots"></div>
+      <button class="ig-arrow" id="igNext" type="button" aria-label="Próximo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+
+    <a class="btn btn-ghost btn-block" href="https://instagram.com/emanamor__" target="_blank" rel="noopener" style="margin-top:18px">Seguir no Instagram</a>
   </section>
 
   <!-- FINAL CTA -->
@@ -522,9 +559,9 @@
 /* =========================================================
    CONFIGURAÇÃO RÁPIDA
    1) WhatsApp: número e mensagem já prontos abaixo.
-   2) Instagram: cole os links dos seus posts em IG_POSTS
-      para trocar os cards bonitos por EMBEDS REAIS.
-      Ex: "https://www.instagram.com/p/Cabc123XYZ/"
+   2) Instagram: cole os links dos posts em IG_POSTS (quantos quiser).
+      Eles aparecem como EMBEDS REAIS dentro do slider horizontal.
+      Aceita posts e reels. Ex: "https://www.instagram.com/p/Cabc123XYZ/"
    ========================================================= */
   var WA_NUMBER = "5511945279819";
   var WA_MSG = "Olá, Suzi! Vim pela página da EmanAmor e gostaria de saber mais sobre as sessões de psicanálise.";
@@ -532,7 +569,7 @@
   var IG_POSTS = [
     // "https://www.instagram.com/p/SEU_POST_1/",
     // "https://www.instagram.com/p/SEU_POST_2/",
-    // "https://www.instagram.com/p/SEU_POST_3/"
+    // "https://www.instagram.com/reel/SEU_REEL_3/"
   ];
 
   /* --- aplica o link do WhatsApp com mensagem em todos os botões --- */
@@ -541,23 +578,65 @@
     document.querySelectorAll("a.wa").forEach(function(a){ a.href = href; });
   })();
 
-  /* --- embeds reais do Instagram (se houver links) --- */
+  /* --- Instagram: slider horizontal (embeds reais OU cards da marca) --- */
   (function(){
-    if(!IG_POSTS.length) return;
-    var wrap = document.getElementById("ig-embeds");
-    var fb = document.getElementById("ig-fallback");
-    IG_POSTS.forEach(function(url){
-      var bq = document.createElement("blockquote");
-      bq.className = "instagram-media";
-      bq.setAttribute("data-instgrm-permalink", url);
-      bq.setAttribute("data-instgrm-version", "14");
-      bq.style.width = "100%";
-      wrap.appendChild(bq);
+    var track = document.getElementById("igTrack");
+    var dotsWrap = document.getElementById("igDots");
+    var prev = document.getElementById("igPrev");
+    var next = document.getElementById("igNext");
+    if(!track) return;
+
+    // 1) Se houver links em IG_POSTS, troca os cards pelos embeds reais
+    if (IG_POSTS && IG_POSTS.length){
+      track.innerHTML = "";
+      IG_POSTS.forEach(function(url){
+        var slide = document.createElement("div");
+        slide.className = "ig-slide embed";
+        var bq = document.createElement("blockquote");
+        bq.className = "instagram-media";
+        bq.setAttribute("data-instgrm-permalink", url);
+        bq.setAttribute("data-instgrm-version", "14");
+        bq.style.width = "100%";
+        bq.style.margin = "0";
+        slide.appendChild(bq);
+        track.appendChild(slide);
+      });
+      var s = document.createElement("script");
+      s.async = true; s.src = "https://www.instagram.com/embed.js";
+      document.body.appendChild(s);
+    }
+
+    // 2) Navegação: dots, setas e swipe
+    var slides = Array.prototype.slice.call(track.children);
+    if(!slides.length) return;
+    slides.forEach(function(_, i){
+      var d = document.createElement("b");
+      if(i === 0) d.className = "on";
+      d.addEventListener("click", function(){ go(i); });
+      dotsWrap.appendChild(d);
     });
-    if(fb) fb.style.display = "none";
-    var s = document.createElement("script");
-    s.async = true; s.src = "https://www.instagram.com/embed.js";
-    document.body.appendChild(s);
+    var dots = Array.prototype.slice.call(dotsWrap.children);
+
+    function step(){
+      var s0 = track.children[0];
+      return s0 ? s0.getBoundingClientRect().width + 13 : track.clientWidth;
+    }
+    function current(){ return Math.round(track.scrollLeft / step()); }
+    function go(i){
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: i * step(), behavior: "smooth" });
+    }
+    function update(){
+      var c = current();
+      dots.forEach(function(d, i){ d.classList.toggle("on", i === c); });
+      if(prev) prev.disabled = c <= 0;
+      if(next) next.disabled = c >= slides.length - 1;
+    }
+    if(prev) prev.addEventListener("click", function(){ go(current() - 1); });
+    if(next) next.addEventListener("click", function(){ go(current() + 1); });
+    var tmr;
+    track.addEventListener("scroll", function(){ clearTimeout(tmr); tmr = setTimeout(update, 60); });
+    update();
   })();
 
   /* --- reveal on scroll --- */
